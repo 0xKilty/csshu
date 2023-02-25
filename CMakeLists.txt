@@ -11,7 +11,5 @@ FetchContent_MakeAvailable(cpr)
 
 find_package(CURL REQUIRED)
 add_executable(csshu main.cpp)
-#target_link_libraries(csshu PRIVATE CURL::libcurl )
+
 target_link_libraries(csshu PRIVATE cpr::cpr)
-#add_custom_target(${PROJECT_NAME}.tar ALL COMMAND
-#    tar -cf ${PROJECT_NAME}.tar *.cc CMakeLists.txt)

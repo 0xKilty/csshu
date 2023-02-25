@@ -4,25 +4,21 @@
 #include <getopt.h>
 #include <fstream>
 
-/*
--u <username>
--lt
--lc
--la
--lm
--lg
--c
--g
--m
--a 
--c 
--t 
--v
--f <file>
--h
-*/
-
 using string = std::string;
+
+void usage() {
+    std::cout << "csshu: a tool to connect automatically to the fastest machine on the CSU network\n"
+    << "Options:\n" 
+    << "-u <username> specify a username\n"
+    << "-f <file>     select a file for upload\n"
+    << "-h            show help message\n"
+    << "-q <quantity> the number of machines in the list\n"
+    << "-l[tcamg]     list machines by specification\n"
+    << "-[tcamg]      connect automatically to a machine by the specification\n"
+    << "(t) uptime (c) CPU (a) Load Average\n"
+    << "(m) Memory (g) GPU (default) Load Average\n";
+    exit(0); 
+}
 
 string get_data(string &url) {
     string data = cpr::Get(cpr::Url{url}).text;
@@ -55,8 +51,10 @@ void ssh_command(string &username, string &machine, string &file) {
         string path; 
         std::cout << "Path for " + file + " on " << machine << ": ";
         std::cin >> path;
+        std::cout << "Executing: scp " << file << " " << host << ":" << path << "\n";
         system(("scp " + file + " " + host + ":" + path).c_str());
     }
+    std::cout << "Executing: ssh " << host << "\n";
     system(("ssh " + host).c_str());
     exit(0);
 }
@@ -97,10 +95,13 @@ int main(int argc, char** argv) {
             mode = 't';
             break;
         case 'a':
-            std::cout << "reached";
-            mode = *optarg;
+            mode = 'a';
+            break;
+        case 'h':
+            usage();
             break;
         default:
+            usage();
             break;
         }
     }
@@ -130,7 +131,8 @@ int main(int argc, char** argv) {
         url += "?column=percent_used_gpu_memory&order=asc";
         highlighted = 4;
     } else if (mode == 'a') {
-        std::cout << "help\n";
+        url += "?column=load_avg&order=asc";
+        highlighted = 2;
     } else {
         std::cout << "Connecting automatically...\n";
     }
@@ -139,7 +141,8 @@ int main(int argc, char** argv) {
     std::size_t end = data.find("</tr>", start+1);
     iter_finds(data, start, end, "<tr>", "</tr>");
     int max = 8;
-    string table[quant][11];
+    string names[quant];
+    int namesIndex = 0;
     int padding = std::to_string(quant).length() + 1;
     int displacement = 1;
     if (!automatic) {
@@ -154,11 +157,15 @@ int main(int argc, char** argv) {
         iter_finds(machine, start_tag, end_tag, key, "</td>");
         string location = machine.substr(start_tag+key.length(), end_tag-start_tag-key.length());
         if (location != "Retired") {
-            if (i == 0 && automatic) {
+            names[namesIndex] = name;
+            namesIndex++;
+            if (namesIndex == 1 && automatic) {
                 ssh_command(username, name, file);
             }
             string tag = std::to_string(i+displacement) + ")";
-            std::cout << tag;
+            if (!automatic) {
+                std::cout << tag;
+            }
             for (int j = 0; j < padding-tag.length(); j++) {
                 std::cout << " ";
             }
@@ -188,7 +195,11 @@ int main(int argc, char** argv) {
         std::cout << "\nSelect a machine: ";
         int option;
         std::cin >> option;
-        ssh_command(username, table[option-1][0], file);
-    }
+        if (std::cin.fail() || option - 1 >= quant-1 || option - 1 < 0) {
+            std::cout << "Please enter a number between 1 and " << quant-1 << "\n";
+            exit(1);
+        }
+        ssh_command(username, names[option-1], file);
+    } 
     return 0;
 }

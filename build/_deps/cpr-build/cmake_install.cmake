@@ -1,4 +1,4 @@
-# Install script for directory: /home/derob/csshu/build/_deps/cpr-src
+# Install script for directory: /home/derob/repos/csshu/build/_deps/cpr-src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -29,7 +29,7 @@ endif()
 
 # Install shared libraries without execute permission?
 if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
-  set(CMAKE_INSTALL_SO_NO_EXE "1")
+  set(CMAKE_INSTALL_SO_NO_EXE "0")
 endif()
 
 # Is this installation the result of a crosscompile?
@@ -44,21 +44,21 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/derob/csshu/build/_deps/zlib-build/cmake_install.cmake")
+  include("/home/derob/repos/csshu/build/_deps/zlib-build/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/derob/csshu/build/_deps/curl-build/cmake_install.cmake")
+  include("/home/derob/repos/csshu/build/_deps/curl-build/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/derob/csshu/build/_deps/cpr-build/cpr/cmake_install.cmake")
+  include("/home/derob/repos/csshu/build/_deps/cpr-build/cpr/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/derob/csshu/build/_deps/cpr-build/include/cmake_install.cmake")
+  include("/home/derob/repos/csshu/build/_deps/cpr-build/include/cmake_install.cmake")
 endif()
 

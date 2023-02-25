@@ -8,13 +8,11 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/derob/csshu/main.cpp" "CMakeFiles/csshu.dir/main.cpp.o" "gcc" "CMakeFiles/csshu.dir/main.cpp.o.d"
+  "/home/derob/repos/csshu/main.cpp" "CMakeFiles/csshu.dir/main.cpp.o" "gcc" "CMakeFiles/csshu.dir/main.cpp.o.d"
   )
 
-# Targets to which this target links.
-set(CMAKE_TARGET_LINKED_INFO_FILES
-  "/home/derob/csshu/build/_deps/cpr-build/cpr/CMakeFiles/cpr.dir/DependInfo.cmake"
-  "/home/derob/csshu/build/_deps/curl-build/lib/CMakeFiles/libcurl.dir/DependInfo.cmake"
+# Targets to which this target links which contain Fortran sources.
+set(CMAKE_Fortran_TARGET_LINKED_INFO_FILES
   )
 
 # Fortran module output directory.
