@@ -1,5 +1,7 @@
 # csshu
 A command-line tool for students to pick a CSU machine to ssh into along with functionality to upload a .tar file which is useful as many courses require your .tar file works on the deparment machines. No passwords are ever input into the program, only the `ssh` and `scp` command.
+
+This project uses [cpr](https://github.com/libcpr/cpr) to make web requests and is downloaded when cmake is ran.
 ## Dependancies
 Debian/Ubuntu
 ```
