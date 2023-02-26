@@ -38,7 +38,7 @@ void print_headers(int padding) {
         std::cout << " ";
     }
     std::cout << std::setw(15) << "Hostname";
-    for (int i = 0; i < sizeof(colums)/sizeof(colums[0]); i++) {
+    for (long unsigned i = 0; i < sizeof(colums)/sizeof(colums[0]); i++) {
         std::cout << std::setw(9) << colums[i];   
     }
     std::cout << std::setw(12) << "Uptime\n";
@@ -47,16 +47,22 @@ void print_headers(int padding) {
 
 void ssh_command(string &username, string &machine, string &file) {
     string host = username + "@" + machine + ".cs.colostate.edu";
-    if (!file.empty()) {
-        string path; 
-        std::cout << "Path for " + file + " on " << machine << ": ";
-        std::cin >> path;
-        std::cout << "Executing: scp " << file << " " << host << ":" << path << "\n";
-        system(("scp " + file + " " + host + ":" + path).c_str());
+    std::cout << "Pinging " << machine << ".cs.colostate.edu...\n"; 
+    int x = system(("ping -c1 -s1 " + machine + ".cs.colostate.edu  > /dev/null 2>&1").c_str());
+    if (x == 0) {
+        if (!file.empty()) {
+            string path; 
+            std::cout << "Path for " + file + " on " << machine << ": ";
+            std::cin >> path;
+            std::cout << "Executing: scp " << file << " " << host << ":" << path << "\n";
+            system(("scp " + file + " " + host + ":" + path).c_str());
+        }
+        std::cout << "Executing: ssh " << host << "\n";
+        system(("ssh " + host).c_str());
+        exit(0);
+    } else {
+        std::cout << machine << " seems to be down\n";
     }
-    std::cout << "Executing: ssh " << host << "\n";
-    system(("ssh " + host).c_str());
-    exit(0);
 }
 
 int main(int argc, char** argv) {
@@ -75,6 +81,10 @@ int main(int argc, char** argv) {
             break;
         case 'q':
             quant = atoi(optarg);
+            if (quant > 170) {
+                std::cerr << argv[0] << ": there are only 170 machines\n";
+                exit(1);
+            }
             break;
         case 'u':
             username = optarg;
@@ -105,6 +115,7 @@ int main(int argc, char** argv) {
             break;
         }
     }
+    // Check if the file exists
     if (!file.empty()) {
         std::ifstream exist_check;
         exist_check.open(file);
@@ -113,10 +124,12 @@ int main(int argc, char** argv) {
             exit(1);
         }
     }
+    // Asks for user name
     if (username.empty()) {
         std::cout << "Username: ";
         std::cin >> username;
     }
+    // Gets the proper url for the mode
     std::string url = "https://www.cs.colostate.edu/machinestats/";
     if (mode == 'c') {
         url +=  "?column=cpu&order=asc"; 
@@ -136,11 +149,11 @@ int main(int argc, char** argv) {
     } else {
         std::cout << "Connecting automatically...\n";
     }
+    // Parse the html
     string data = get_data(url);
     std::size_t start = data.find("<tr>");
     std::size_t end = data.find("</tr>", start+1);
     iter_finds(data, start, end, "<tr>", "</tr>");
-    int max = 8;
     string names[quant];
     int namesIndex = 0;
     int padding = std::to_string(quant).length() + 1;
@@ -166,7 +179,7 @@ int main(int argc, char** argv) {
             if (!automatic) {
                 std::cout << tag;
             }
-            for (int j = 0; j < padding-tag.length(); j++) {
+            for (long unsigned j = 0; j < padding-tag.length(); j++) {
                 std::cout << " ";
             }
             std::cout << std::setw(15) << name << " ";
@@ -181,7 +194,6 @@ int main(int argc, char** argv) {
                 if (j != 1 && j != 0 && j != 6 && j != 8) {
                     std::cout << std::setw(8) << cell << " ";
                 }
-                int temp = end_tag;
                 iter_finds(machine, start_tag, end_tag, key, "</td>");
             }
             std::cout << "\n";
@@ -191,6 +203,7 @@ int main(int argc, char** argv) {
         }
         iter_finds(data, start, end, "<tr>", "</tr>"); 
     }
+    // Prompts for machine selection
     if (!automatic) {
         std::cout << "\nSelect a machine: ";
         int option;
