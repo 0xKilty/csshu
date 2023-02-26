@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.11)
 project(csshu)
 
-add_compile_options(-Wall)
+add_compile_options(-Wall -O2)
 
 
 include(FetchContent)
